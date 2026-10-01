@@ -166,6 +166,8 @@ config.example.yaml     all tunable parameters
   (`outputs/`, `uploads/`, `venv/` and `data/demo/` are git-ignored). In the project folder:
   `git init`, `git add .`, `git commit -m "Multi-hazard DSS"`, `git branch -M main`,
   `git remote add origin https://github.com/<team-lead>/<repo>.git`, `git push -u origin main`.
+  <img width="319" height="582" alt="image" src="https://github.com/user-attachments/assets/388bf38f-bdb0-435e-bada-cbf1f0a78e96" />
+
 * Put the real input data (or the download steps above) in the repo so reviewers can reproduce the run.
 
 Data credits: OpenStreetMap contributors (ODbL), Copernicus Sentinel data, USGS SRTM, UCSB CHIRPS, JRC Global Surface Water.
