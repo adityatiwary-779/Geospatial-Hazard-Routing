@@ -18,13 +18,113 @@ GeoTIFF/GeoJSON/CSV files, static maps and a report.
 | Output: multi-hazard risk map + web visualization | `web/` (Leaflet app), `maps/risk_map.png`, `viewer_standalone.html` |
 | Output: interactive emergency-route map | web app: pick a settlement or click the map, choose hospital / shelter, set risk aversion |
 
+## Web application walkthrough
+
+> The pictures below use **demo data** that we made up (fake hazards, roads and villages). It is drawn on a real
+> map, so the place names are real but the risk results are not. With your own data, the same screens show your own results.
+
+### 1. Web application UI
+
+![Web application UI](docs/screenshots/01-web-ui.png)
+
+**What this picture shows:** the first screen of the app. The left side is the control panel. The right side is a map.
+
+* **Inputs:** this is where you upload your files: roads, settlements, hospitals, shelters, and the flood, landslide and slope maps.
+* **Run analysis:** starts the calculation on your files.
+* **Use demo data:** tries the app with sample data, so no files are needed.
+* **Previous runs:** opens results from earlier runs.
+
+**Tech stack (what we built it with)**
+
+| Part | Technology |
+|---|---|
+| Web page | HTML, CSS, JavaScript, Leaflet (for the map) |
+| Server | Python, Flask |
+| Map data processing | GeoPandas, Shapely, Rasterio, PyProj |
+| Calculations | NumPy, SciPy, pandas |
+| Route finding | NetworkX |
+| Maps and reports | Matplotlib, Pillow |
+| Data sources | Google Earth Engine, OpenStreetMap |
+| Testing | pytest |
+
+### 2. Multi-hazard risk map
+
+![Multi-hazard risk map](docs/screenshots/02-risk-map.png)
+
+**What this picture shows:** a map that shows how risky each area is. Flood, landslide and slope are combined into one
+risk score. Each colour on the map means a level of risk (see the legend at the bottom right).
+
+| Colour | Risk level | Where you see it on this map |
+|---|---|---|
+| Green | Very Low | Safe flat land in the middle and south |
+| Light green | Low | Most of the open land between the roads |
+| Yellow | Moderate | Along the edge of the river area and in some hills |
+| Orange | High | The hills in the north, where landslides are likely |
+| Red | Very High | The river area in the south-centre, where floods are most likely |
+
+* Black outlines are the **high-risk zones** (orange and red areas).
+* Coloured circles are villages. Their colour shows how risky their location is.
+* **H** is a hospital. **S** is a shelter.
+* Coloured lines are roads. Green is safe. Orange and red roads pass through dangerous areas.
+
+### 3. Risk results and downloads
+
+![Risk results panel](docs/screenshots/03-risk-results-panel.png)
+
+**What this picture shows:** the numbers behind the map, for the dangerous areas.
+
+* How many high-risk zones were found, and their total area.
+* How many villages are in high-risk areas, and how many people live there.
+* How the area splits across the five risk levels.
+* How much importance was given to flood, landslide and slope.
+* A list of the riskiest villages, and what makes them risky (flood, landslide or slope).
+
+**Downloads:** at the bottom of this panel you can download files as proof or for a report:
+
+* Report (a written summary)
+* Risk map and routes map (pictures)
+* Risk map data (GeoTIFF) and high-risk zones and routes (GeoJSON)
+* Village risk table (CSV)
+* A standalone map that opens in any browser without internet
+* A ZIP file with everything
+
+### 4. Emergency route on the map
+
+![Emergency route on the map](docs/screenshots/04-route-on-map.png)
+
+**What this picture shows:** a safe route drawn on the map.
+
+* **A** is where the person **starts**.
+* **S** is the **shelter** where the person is going. The blue ring shows it is the destination.
+* The **solid blue line** is the **safest route**.
+* The **dashed black line** is the **shortest route**, shown so you can compare.
+
+Here the shortest road goes through the red flood area, so the safest route takes a longer way round to stay out of danger.
+
+### 5. Choosing an emergency route
+
+![Emergency route panel](docs/screenshots/05-route-panel.png)
+
+**What this picture shows:** the panel where you ask for a route.
+
+1. **Start from:** pick a village, or click a spot on the map.
+2. **Go to the nearest:** choose one of three options:
+   * **hospital or shelter**
+   * **hospital**
+   * **shelter**
+3. Press **Find least-risk route**.
+
+The route appears on the map from **A** to the destination. The panel shows the **distance** and **travel time** and
+compares the safest route with the shortest route. The route is drawn as a line to follow; the app does not give
+spoken turn-by-turn directions.
+
 ## Install (Python 3.10, 3.11 or 3.12)
 
 Windows (cmd.exe), run each line in the project folder:
 
 ```
-py -m venv env
-env\Scripts\activate
+py -m venv venv
+venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -43,7 +143,7 @@ python run.py --demo
 python app.py
 ```
 
-Then open http://127.0.0.1:5000 and click **Use demo data**. The demo is a **synthetic** area
+Then open http://127.0.0.1:5000. The page is empty until a run exists, so click **Use demo data** (the latest run is reloaded automatically the next time you open the page). The demo is a **synthetic** area
 (fictional terrain, roads and villages) so the system can be tried instantly.
 
 `python run.py --demo` writes everything to `outputs/demo/`; open `outputs/demo/viewer_standalone.html`
@@ -143,7 +243,7 @@ Sentinel-2 (NDVI), OpenStreetMap.
 python -m pytest -q tests
 ```
 
-27+ tests cover normalisation, AHP/entropy/TOPSIS, a networkx cross-check of the routing costs, route geometry,
+28 tests cover normalisation, AHP/entropy/TOPSIS, a networkx cross-check of the routing costs, route geometry,
 road noding, input validation, hazard derivation from a DEM, the full pipeline on demo data, the Flask API and the
 OSM parser.
 
@@ -166,8 +266,6 @@ config.example.yaml     all tunable parameters
   (`outputs/`, `uploads/`, `venv/` and `data/demo/` are git-ignored). In the project folder:
   `git init`, `git add .`, `git commit -m "Multi-hazard DSS"`, `git branch -M main`,
   `git remote add origin https://github.com/<team-lead>/<repo>.git`, `git push -u origin main`.
-  <img width="319" height="582" alt="image" src="https://github.com/user-attachments/assets/388bf38f-bdb0-435e-bada-cbf1f0a78e96" />
-
 * Put the real input data (or the download steps above) in the repo so reviewers can reproduce the run.
 
 Data credits: OpenStreetMap contributors (ODbL), Copernicus Sentinel data, USGS SRTM, UCSB CHIRPS, JRC Global Surface Water.
