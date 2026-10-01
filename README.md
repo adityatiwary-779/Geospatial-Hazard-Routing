@@ -25,7 +25,7 @@ GeoTIFF/GeoJSON/CSV files, static maps and a report.
 
 ### 1. Web application UI
 
-![Web application UI](docs/screenshots/01-web-ui.png)
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/7e7dc8e4-0cb7-4112-94e7-7a56c5639c29" />
 
 **What this picture shows:** the first screen of the app. The left side is the control panel. The right side is a map.
 
@@ -49,7 +49,7 @@ GeoTIFF/GeoJSON/CSV files, static maps and a report.
 
 ### 2. Multi-hazard risk map
 
-![Multi-hazard risk map](docs/screenshots/02-risk-map.png)
+<img width="1911" height="1075" alt="image" src="https://github.com/user-attachments/assets/1e8e5d28-23ef-467d-b5fb-f0bfb10ade41" />
 
 **What this picture shows:** a map that shows how risky each area is. Flood, landslide and slope are combined into one
 risk score. Each colour on the map means a level of risk (see the legend at the bottom right).
@@ -69,7 +69,7 @@ risk score. Each colour on the map means a level of risk (see the legend at the 
 
 ### 3. Risk results and downloads
 
-![Risk results panel](docs/screenshots/03-risk-results-panel.png)
+<img width="310" height="793" alt="image" src="https://github.com/user-attachments/assets/ed409042-2d17-45b5-bd25-6f7011f49fc2" />
 
 **What this picture shows:** the numbers behind the map, for the dangerous areas.
 
@@ -90,7 +90,7 @@ risk score. Each colour on the map means a level of risk (see the legend at the 
 
 ### 4. Emergency route on the map
 
-![Emergency route on the map](docs/screenshots/04-route-on-map.png)
+<img width="897" height="523" alt="image" src="https://github.com/user-attachments/assets/0ed0ed89-ac7b-4cc4-bbca-bf6e683309c8" />
 
 **What this picture shows:** a safe route drawn on the map.
 
@@ -103,7 +103,7 @@ Here the shortest road goes through the red flood area, so the safest route take
 
 ### 5. Choosing an emergency route
 
-![Emergency route panel](docs/screenshots/05-route-panel.png)
+<img width="314" height="594" alt="image" src="https://github.com/user-attachments/assets/0941d4fa-e0fb-4088-ae31-2bb3c5f6bcfd" />
 
 **What this picture shows:** the panel where you ask for a route.
 
