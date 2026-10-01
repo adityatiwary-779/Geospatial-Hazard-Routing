@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Hazard Risk and Emergency Routing</title>
+<!--CSS-->
+<link rel="stylesheet" href="/static/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="/static/style.css">
+<!--/CSS-->
+</head>
+<body>
+<div id="app">
+  <aside id="panel" aria-label="Controls">
+    <header class="brand">
+      <h1>Multi-Hazard Risk &amp; Emergency Routing</h1>
+      <p>Flood, landslide and slope hazards combined into an MCDM risk index, with least-risk evacuation routes.</p>
+    </header>
+
+    <section id="sec-inputs" class="card server-only">
+      <h2>1. Inputs</h2>
+      <form id="run-form" autocomplete="off">
+        <fieldset>
+          <legend>Required vector layers</legend>
+          <label>Roads <span class="hint">lines</span><input type="file" name="roads" accept=".geojson,.json,.gpkg,.zip"></label>
+          <label>Settlements <span class="hint">points / polygons</span><input type="file" name="settlements" accept=".geojson,.json,.gpkg,.zip"></label>
+          <label>Hospitals <span class="hint">points</span><input type="file" name="hospitals" accept=".geojson,.json,.gpkg,.zip"></label>
+          <label>Shelters <span class="hint">points</span><input type="file" name="shelters" accept=".geojson,.json,.gpkg,.zip"></label>
+        </fieldset>
+        <fieldset>
+          <legend>Hazard rasters (GeoTIFF)</legend>
+          <label>Flood hazard<input type="file" name="flood" accept=".tif,.tiff"></label>
+          <label>Landslide hazard<input type="file" name="landslide" accept=".tif,.tiff"></label>
+          <label>Slope <span class="hint">degrees</span><input type="file" name="slope" accept=".tif,.tiff"></label>
+          <label>DEM <span class="hint">optional: derives slope / missing hazards</span><input type="file" name="dem" accept=".tif,.tiff"></label>
+          <label>Rainfall <span class="hint">optional</span><input type="file" name="rainfall" accept=".tif,.tiff"></label>
+          <label>NDVI <span class="hint">optional</span><input type="file" name="ndvi" accept=".tif,.tiff"></label>
+        </fieldset>
+        <details>
+          <summary>Method options</summary>
+          <div class="grid2">
+            <label>Aggregation
+              <select name="aggregation"><option value="wlc">Weighted linear combination</option><option value="topsis">TOPSIS</option></select></label>
+            <label>Weights
+              <select name="weights" id="weights-method"><option value="ahp">AHP (pairwise)</option><option value="equal">Equal</option><option value="entropy">Entropy</option><option value="manual">Manual</option></select></label>
+            <label>Risk classes
+              <select name="class_method"><option value="quantile">Quantile (relative)</option><option value="equal">Equal interval (absolute)</option></select></label>
+            <label>High-risk from
+              <select name="high_class"><option value="4">High and above</option><option value="5">Very High only</option></select></label>
+          </div>
+          <div id="opt-ahp" class="grid3">
+            <label>Flood vs landslide<input type="number" name="ahp_fl" min="0.11" max="9" step="any" value="2"></label>
+            <label>Flood vs slope<input type="number" name="ahp_fs" min="0.11" max="9" step="any" value="3"></label>
+            <label>Landslide vs slope<input type="number" name="ahp_ls" min="0.11" max="9" step="any" value="2"></label>
+          </div>
+          <div id="opt-manual" class="grid3" hidden>
+            <label>Flood w<input type="number" name="w_flood" min="0" step="0.05" value="0.40"></label>
+            <label>Landslide w<input type="number" name="w_landslide" min="0" step="0.05" value="0.35"></label>
+            <label>Slope w<input type="number" name="w_slope" min="0" step="0.05" value="0.25"></label>
+          </div>
+          <p class="hint">AHP numbers use Saaty's scale: 3 means the first criterion is moderately more important than the second.</p>
+        </details>
+        <div class="row">
+          <button type="submit" class="primary" id="btn-run">Run analysis</button>
+          <button type="button" id="btn-demo">Use demo data</button>
+        </div>
+        <p id="run-status" role="status" aria-live="polite"></p>
+        <label id="prev-wrap" hidden>Previous runs<select id="prev-runs"></select></label>
+      </form>
+    </section>
+
+    <section id="sec-results" class="card" hidden>
+      <h2>2. Risk results</h2>
+      <div id="tiles" class="tiles"></div>
+      <h3>Risk class share of the area</h3>
+      <div id="classbar" class="classbar" role="img" aria-label="Share of area by risk class"></div>
+      <ul id="classlegend" class="classlegend"></ul>
+      <h3>Criteria weights</h3>
+      <div id="weights"></div>
+      <h3>Highest-risk settlements</h3>
+      <ol id="toplist" class="toplist"></ol>
+      <label class="opacity">Overlay opacity<input type="range" id="opacity" min="0.1" max="1" step="0.05" value="0.85"></label>
+      <h3>Downloads</h3>
+      <div id="downloads" class="downloads"></div>
+      <ul id="warnings" class="warnings"></ul>
+    </section>
+
+    <section id="sec-route" class="card" hidden>
+      <h2>3. Emergency route</h2>
+      <label>Start from
+        <select id="origin-select"></select></label>
+      <div class="row">
+        <button type="button" id="btn-pick" class="server-only">Pick start on map</button>
+      </div>
+      <fieldset class="radios">
+        <legend>Go to the nearest</legend>
+        <label><input type="radio" name="ftype" value="any" checked> hospital or shelter</label>
+        <label><input type="radio" name="ftype" value="hospital"> hospital</label>
+        <label><input type="radio" name="ftype" value="shelter"> shelter</label>
+      </fieldset>
+      <label id="aversion-wrap">Risk aversion: <output id="aversion-out">10</output>
+        <input type="range" id="aversion" min="0" max="30" step="1" value="10">
+        <span class="hint">0 = shortest route; higher = accept detours to avoid hazard</span></label>
+      <p id="fixed-k" class="hint" hidden></p>
+      <div class="row"><button type="button" class="primary" id="btn-route">Find least-risk route</button></div>
+      <p id="route-status" role="status" aria-live="polite"></p>
+      <div id="route-result"></div>
+    </section>
+
+    <footer class="foot">Risk is a screening index from the supplied hazard layers, not a forecast. Check routes against local conditions.</footer>
+  </aside>
+  <main id="map" aria-label="Map"></main>
+</div>
+<!--JS-->
+<script src="/static/vendor/leaflet/leaflet.js"></script>
+<script src="/static/app.js"></script>
+<!--/JS-->
+</body>
+</html>

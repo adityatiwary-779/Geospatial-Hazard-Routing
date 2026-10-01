@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+env/
+outputs/
+uploads/
+data/demo/
+data/input/*
+!data/input/README.txt
+*.pkl
+.DS_Store

@@ -1,0 +1,13 @@
+uid,name,type,risk_mean,risk_class,risk_label,suitable,note
+H1,District Hospital,hospital,0.0257,1,Very Low,True,
+H2,Community Health Centre,hospital,0.045,1,Very Low,True,
+H3,Taluk Hospital,hospital,0.197,2,Low,True,
+H4,River Road Clinic,hospital,0.2818,3,Moderate,True,
+SH1,Relief Shelter 1,shelter,0.0048,1,Very Low,True,
+SH2,Relief Shelter 2,shelter,0.0071,1,Very Low,True,
+SH3,Relief Shelter 3,shelter,0.0223,1,Very Low,True,
+SH4,Relief Shelter 4,shelter,0.0127,1,Very Low,True,
+SH5,Relief Shelter 5,shelter,0.085,1,Very Low,True,
+SH6,Relief Shelter 6,shelter,0.0128,1,Very Low,True,
+SH7,Relief Shelter 7,shelter,0.3143,4,High,True,
+SH8,Relief Shelter 8,shelter,0.3,3,Moderate,True,

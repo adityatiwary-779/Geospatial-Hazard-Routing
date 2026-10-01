@@ -1,0 +1,43 @@
+# Copy to config.yaml, edit, and pass with:  python run.py --input data/input --config config.yaml
+# Only keys you want to change are needed; everything else keeps its default.
+
+grid:
+  cell_size_m: null          # null = finest input raster resolution
+slope_unit: auto             # auto | degrees | percent
+
+normalization:               # per-layer rescaling to 0-1 (1 = most hazardous)
+  flood:     {method: percentile, p_low: 2, p_high: 98}
+  landslide: {method: percentile, p_low: 2, p_high: 98}
+  slope:     {method: fixed, min: 0, max: 45}     # degrees
+
+mcdm:
+  aggregation: wlc           # wlc | topsis
+  weights:
+    method: ahp              # ahp | equal | entropy | manual
+    ahp_judgements:          # Saaty scale; "a>b: 3" = a is moderately more important than b
+      "flood>landslide": 2
+      "flood>slope": 3
+      "landslide>slope": 2
+    manual: {flood: 0.40, landslide: 0.35, slope: 0.25}
+  extra_criteria: []         # e.g. [rainfall, ndvi] if those rasters are supplied
+  classification:
+    method: quantile         # quantile (relative) | equal (absolute 0.2 steps) | manual
+    quantiles: [0.50, 0.75, 0.90, 0.97]
+    breaks: [0.2, 0.4, 0.6, 0.8]
+  high_risk_min_class: 4     # 4 = High and above, 5 = Very High only
+  min_zone_area_km2: 0.25
+  sensitivity: {enabled: true, runs: 40, perturbation: 0.25, seed: 42}
+
+assets:
+  settlement_buffer_m: 300   # risk of a settlement = mean index within this radius
+  facility_buffer_m: 100
+
+routing:
+  risk_aversion: 10          # K in cost = length * (1 + K * risk^gamma); 0 = shortest route
+  risk_exponent: 1.5         # gamma
+  block_min_class: 5         # road segments touching this class (or worse) are heavily penalised
+  block_multiplier: 10
+  speed_kmh: 30
+  node_intersections: true   # connect roads that cross without a shared vertex
+  max_snap_distance_m: 5000
+  unsuitable_shelter_min_class: 5   # shelters in this class are not used as destinations

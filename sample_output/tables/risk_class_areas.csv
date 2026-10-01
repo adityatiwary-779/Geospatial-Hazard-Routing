@@ -1,0 +1,6 @@
+class,label,cells,area_km2,percent
+1,Very Low,162279,180.989,50.0
+2,Low,81139,90.494,25.0
+3,Moderate,48684,54.297,15.0
+4,High,22719,25.338,7.0
+5,Very High,9737,10.86,3.0

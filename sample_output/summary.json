@@ -1,0 +1,260 @@
+{
+  "title": "Multi-hazard risk and least-risk emergency routing",
+  "runtime_seconds": 1.2,
+  "inputs": {
+    "roads": "roads.geojson",
+    "settlements": "settlements.geojson",
+    "hospitals": "hospitals.geojson",
+    "shelters": "shelters.geojson",
+    "flood": "flood_hazard.tif",
+    "landslide": "landslide_hazard.tif",
+    "slope": "slope.tif",
+    "dem": "dem.tif"
+  },
+  "grid": {
+    "crs": "EPSG:32643",
+    "cell_m": 33.4,
+    "width": 656,
+    "height": 500
+  },
+  "layers": {
+    "slope": "provided",
+    "flood": "provided",
+    "landslide": "provided"
+  },
+  "criteria": [
+    "flood",
+    "landslide",
+    "slope"
+  ],
+  "weights": {
+    "flood": 0.5396,
+    "landslide": 0.297,
+    "slope": 0.1634
+  },
+  "weight_info": {
+    "method": "ahp",
+    "lambda_max": 3.009202712714283,
+    "consistency_ratio": 0.007933373029554188,
+    "consistent": true,
+    "matrix": [
+      [
+        1.0,
+        2.0,
+        3.0
+      ],
+      [
+        0.5,
+        1.0,
+        2.0
+      ],
+      [
+        0.3333,
+        0.5,
+        1.0
+      ]
+    ]
+  },
+  "aggregation": "wlc",
+  "class_breaks": [
+    0.0876,
+    0.241,
+    0.3119,
+    0.5448
+  ],
+  "classification_method": "quantile",
+  "class_stats": [
+    {
+      "class": 1,
+      "label": "Very Low",
+      "cells": 162279,
+      "area_km2": 180.989,
+      "percent": 50.0
+    },
+    {
+      "class": 2,
+      "label": "Low",
+      "cells": 81139,
+      "area_km2": 90.494,
+      "percent": 25.0
+    },
+    {
+      "class": 3,
+      "label": "Moderate",
+      "cells": 48684,
+      "area_km2": 54.297,
+      "percent": 15.0
+    },
+    {
+      "class": 4,
+      "label": "High",
+      "cells": 22719,
+      "area_km2": 25.338,
+      "percent": 7.0
+    },
+    {
+      "class": 5,
+      "label": "Very High",
+      "cells": 9737,
+      "area_km2": 10.86,
+      "percent": 3.0
+    }
+  ],
+  "high_risk_min_class": 4,
+  "high_risk_label": "High",
+  "sensitivity": {
+    "runs": 40,
+    "perturbation_pct": 25.0,
+    "mean_index_std": 0.012774196453392506,
+    "max_index_std": 0.04467682167887688,
+    "high_risk_cells_stable_pct": 84.53290608824254
+  },
+  "n_zones": 23,
+  "high_risk_area_km2": 25.635,
+  "settlements": {
+    "total": 32,
+    "high_risk": 4,
+    "by_class": {
+      "Very Low": 10,
+      "Low": 13,
+      "Moderate": 5,
+      "High": 2,
+      "Very High": 2
+    },
+    "population_total": 80588.0,
+    "population_in_high_risk": 2858.0,
+    "top": [
+      {
+        "uid": "S4",
+        "name": "Village 04",
+        "risk_mean": 0.5465,
+        "risk_class": 5,
+        "risk_label": "Very High",
+        "driver": "flood",
+        "population": 821.0
+      },
+      {
+        "uid": "S9",
+        "name": "Village 09",
+        "risk_mean": 0.5451,
+        "risk_class": 5,
+        "risk_label": "Very High",
+        "driver": "flood",
+        "population": 1476.0
+      },
+      {
+        "uid": "S2",
+        "name": "Village 02",
+        "risk_mean": 0.5227,
+        "risk_class": 4,
+        "risk_label": "High",
+        "driver": "flood",
+        "population": 238.0
+      },
+      {
+        "uid": "S7",
+        "name": "Village 07",
+        "risk_mean": 0.329,
+        "risk_class": 4,
+        "risk_label": "High",
+        "driver": "landslide",
+        "population": 323.0
+      },
+      {
+        "uid": "S11",
+        "name": "Village 11",
+        "risk_mean": 0.2947,
+        "risk_class": 3,
+        "risk_label": "Moderate",
+        "driver": "flood",
+        "population": 703.0
+      },
+      {
+        "uid": "S1",
+        "name": "Village 01",
+        "risk_mean": 0.2858,
+        "risk_class": 3,
+        "risk_label": "Moderate",
+        "driver": "landslide",
+        "population": 1064.0
+      },
+      {
+        "uid": "S23",
+        "name": "Village 23",
+        "risk_mean": 0.2691,
+        "risk_class": 3,
+        "risk_label": "Moderate",
+        "driver": "flood",
+        "population": 1490.0
+      },
+      {
+        "uid": "S10",
+        "name": "Village 10",
+        "risk_mean": 0.2678,
+        "risk_class": 3,
+        "risk_label": "Moderate",
+        "driver": "landslide",
+        "population": 818.0
+      },
+      {
+        "uid": "S21",
+        "name": "Village 21",
+        "risk_mean": 0.2603,
+        "risk_class": 3,
+        "risk_label": "Moderate",
+        "driver": "flood",
+        "population": 4440.0
+      },
+      {
+        "uid": "S3",
+        "name": "Village 03",
+        "risk_mean": 0.235,
+        "risk_class": 2,
+        "risk_label": "Low",
+        "driver": "landslide",
+        "population": 9560.0
+      }
+    ]
+  },
+  "hospitals": {
+    "total": 4,
+    "high_risk": 0,
+    "unsuitable": 0
+  },
+  "shelters": {
+    "total": 8,
+    "high_risk": 1,
+    "unsuitable": 0
+  },
+  "road_network": {
+    "input_lines": 196,
+    "edges": 264,
+    "nodes": 168,
+    "components": 1,
+    "disconnected_edges_dropped": 0,
+    "total_length_km": 386.04
+  },
+  "routing": {
+    "risk_aversion": 10.0,
+    "speed_kmh": 30.0,
+    "routes_computed": 32,
+    "median_extra_km": 0.0,
+    "median_risk_reduction_pct": 0.0,
+    "routes_that_differ": 5
+  },
+  "warnings": [],
+  "colors": [
+    "#2e9e4f",
+    "#a6d24b",
+    "#f2c230",
+    "#ef7b22",
+    "#c0252d"
+  ],
+  "labels": [
+    "Very Low",
+    "Low",
+    "Moderate",
+    "High",
+    "Very High"
+  ]
+}
